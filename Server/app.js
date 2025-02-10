@@ -3,7 +3,9 @@ import dotenv from "dotenv";
 import DatabaseConnect from "./config/db.js";
 import cors from "cors";
 import userRoute from "./routes/user.js";
+import songRoute from "./routes/song.js";
 import cookieParser from "cookie-parser";
+import cloudinary from "cloudinary";
 
 const app = express();
 dotenv.config();
@@ -14,7 +16,14 @@ app.use(express.json());
 app.use(urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use("/api/v1", userRoute);
+app.use("/api/v1/user", userRoute);
+app.use("/api/v1/song", songRoute);
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+});
 
 const port = process.env.PORT;
 app.listen(port, () => {
