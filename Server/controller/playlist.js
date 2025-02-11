@@ -3,7 +3,7 @@ import Song from "../models/song.js";
 
 const CreatePlaylist = async (req, res) => {
   const { name, description, songs } = req.body;
-  const userId = req.params._id;
+  const userId = req.user.id;
 
   if (!songs || songs.length < 2) {
     return res.status(400).json({
@@ -42,13 +42,14 @@ const CreatePlaylist = async (req, res) => {
 };
 
 const EditPlaylist = async (req, res) => {
-  const [name, description] = req.body;
-  const playlistId = req.params._id;
+  const { name, description } = req.body;
+  const { id } = req.params;
+
   if (!name || !description) {
     return res.status(400).json({ message: "Name or description is required" });
   }
   try {
-    const playlist = await Playlist.findById(playlistId);
+    const playlist = await Playlist.findById(id);
 
     if (!playlist) {
       return res.status(404).json({ message: "Playlist not found" });
@@ -79,7 +80,7 @@ const EditPlaylist = async (req, res) => {
 const DeletePlaylist = async (req, res) => {
   const { id } = req.params;
   try {
-    const playlist = await Playlist.find(id);
+    const playlist = await Playlist.findById(id);
 
     if (!playlist) {
       return res.status(404).json({ message: "Playlist not found" });
@@ -104,11 +105,11 @@ const DeletePlaylist = async (req, res) => {
 };
 
 const AddSong = async (req, res) => {
-  const { playlistId } = req.params;
+  const { id } = req.params;
   const { songId } = req.body;
 
   try {
-    const playlist = await Playlist.findById(playlistId);
+    const playlist = await Playlist.findById(id);
 
     if (!playlist) {
       return res.status(404).json({ message: "Playlist not found" });
@@ -148,11 +149,11 @@ const AddSong = async (req, res) => {
 };
 
 const removeSongFromPlaylist = async (req, res) => {
-  const { playlistId } = req.params;
+  const { id } = req.params;
   const { songId } = req.body;
 
   try {
-    const playlist = await Playlist.findById(playlistId);
+    const playlist = await Playlist.findById(id);
 
     if (!playlist) {
       return res.status(404).json({ message: "Playlist not found" });
@@ -181,11 +182,11 @@ const removeSongFromPlaylist = async (req, res) => {
 };
 
 const reorderSongsInPlaylist = async (req, res) => {
-  const { playlistId } = req.params;
+  const { id } = req.params;
   const { songOrder } = req.body;
 
   try {
-    const playlist = await Playlist.findById(playlistId);
+    const playlist = await Playlist.findById(id);
 
     if (!playlist) {
       return res.status(404).json({ message: "Playlist not found" });

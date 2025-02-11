@@ -5,6 +5,7 @@ import cors from "cors";
 import userRoute from "./routes/user.js";
 import songRoute from "./routes/song.js";
 import playlistRoute from "./routes/playlist.js";
+import searchRoute from "./routes/search.js";
 import cookieParser from "cookie-parser";
 import cloudinary from "cloudinary";
 
@@ -20,6 +21,7 @@ app.use(cookieParser());
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/song", songRoute);
 app.use("/api/v1/playlist", playlistRoute);
+app.use("/api/v1", searchRoute);
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
