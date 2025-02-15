@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const Login = ({ handleLogin }) => {
+const Login = ({ handleLogin, setIsLoggedIn }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLocalLogin] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,7 +16,7 @@ const Login = ({ handleLogin }) => {
     }
   }, [isLoggedIn, navigate]);
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!email || !password) {
@@ -37,6 +37,9 @@ const Login = ({ handleLogin }) => {
 
       if (response.status === 200 && response.data && response.data.token) {
         console.log("Login successful", response.data);
+        handleLogin(response.data.token);
+        setIsLocalLogin(true);
+        setIsLoggedIn(true);
       }
     } catch (error) {
       console.error("Login error", error);
@@ -49,7 +52,7 @@ const Login = ({ handleLogin }) => {
     <div>
       <h2>Login</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleLogin}>
+      <form onSubmit={handleSubmit}>
         <label htmlFor="Email">Email </label>
         <input
           type="email"
@@ -65,7 +68,9 @@ const Login = ({ handleLogin }) => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button type="submit">Login</button>
+        <button type="submit" onClick={handleLogin}>
+          Login
+        </button>
         {loading ? "Logging in..." : ""}
       </form>
     </div>

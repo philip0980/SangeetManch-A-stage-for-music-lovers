@@ -9,12 +9,18 @@ const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
     <nav style={styles.navbar}>
       {/* Logo */}
       <div style={styles.logo}>
-        <h1>MyApp</h1>
+        <h1>
+          <Link to="/"></Link>
+        </h1>
       </div>
 
       {/* Search Bar */}
       <div style={styles.searchBar}>
-        <input type="text" placeholder="Search..." style={styles.searchInput} />
+        <input
+          type="text"
+          placeholder="Song , Album , Genre..."
+          style={styles.searchInput}
+        />
       </div>
 
       {/* Right Side: Login Button */}
@@ -28,7 +34,9 @@ const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
             <button onClick={handleLogout} style={styles.loginLink}>
               Logout
             </button>
-            <Link to="/profile">Profile</Link>
+            <Link to="/profile" style={{ marginLeft: "10px" }}>
+              Profile
+            </Link>
           </div>
         )}
       </div>
@@ -41,17 +49,22 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: "10px 20px",
     backgroundColor: "#333",
     color: "#fff",
+    width: "calc(100vw - 250px)",
+    height: "12vh",
+    boxSizing: "border-box",
+    padding: "0 30px",
+    borderBottom: "1px solid white",
   },
   logo: {
-    fontSize: "1.5rem",
+    fontSize: "1rem",
   },
   searchBar: {
     flex: 1, // This makes the search bar grow to take up available space
     display: "flex",
     justifyContent: "center",
+    height: "50px",
   },
   searchInput: {
     width: "60%",
