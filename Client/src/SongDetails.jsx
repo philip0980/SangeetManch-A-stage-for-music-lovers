@@ -2,12 +2,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { useAudio } from "./AudioContext";
 
 const SongDetailsPage = () => {
   const { id } = useParams();
   const [songDetails, setSongDetails] = useState(null);
-  const { setSong, stopSong } = useAudio();
+  const [song, setSong] = useState();
 
   useEffect(() => {
     const fetchSongDetails = async () => {
@@ -24,15 +23,13 @@ const SongDetailsPage = () => {
     };
 
     fetchSongDetails();
-
-    return () => {
-      stopSong();
-    };
-  }, [id, setSong, stopSong]);
+  }, [id]);
 
   if (!songDetails) {
     return <div>Loading...</div>;
   }
+
+  localStorage.setItem("currentSong", song);
 
   return (
     <div style={styles.pageContainer}>
@@ -51,9 +48,6 @@ const SongDetailsPage = () => {
       </p>
       <p>
         <strong>Album:</strong> {songDetails.album}
-      </p>
-      <p>
-        <strong>Description:</strong> {songDetails.description}
       </p>
     </div>
   );

@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { useAudio } from "./AudioContext"; // Import useAudio hook
 
 const HomePage = () => {
   const [songs, setSongs] = useState([]);
-  const { setSong } = useAudio(); // Get setSong from context
 
   useEffect(() => {
     fetchSongs();
@@ -22,14 +20,12 @@ const HomePage = () => {
     }
   };
 
-  const handleSongClick = (song) => {
-    setSong(song.url); // Trigger the setSong function to start playing
-  };
+  const handleSongClick = () => {};
 
   return (
     <div style={styles.container}>
       {songs.map((song) => (
-        <div key={song.id} style={styles.songCard}>
+        <div key={song._id} style={styles.songCard}>
           <Link to={`/song/${song._id}`} onClick={() => handleSongClick(song)}>
             <img
               src={song.coverImageUrl}

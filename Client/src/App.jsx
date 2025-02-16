@@ -13,7 +13,6 @@ import Sidebar from "./Sidebar";
 import SongDetails from "./SongDetails";
 import axios from "axios";
 import AudioPlayer from "./AudioPlayer";
-import { AudioProvider } from "./AudioContext";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -58,41 +57,39 @@ const App = () => {
 
   return (
     <Router>
-      <AudioProvider>
-        <div style={styles.app_container}>
-          <Sidebar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
-          <div style={styles.main_content}>
-            <Navbar
-              isLoggedIn={isLoggedIn}
-              setIsLoggedIn={setIsLoggedIn}
-              onLogout={handleLogout}
-            />
-            <div style={styles.content_container}>
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route
-                  path="/login"
-                  element={
-                    <Login
-                      setIsLoggedIn={setIsLoggedIn}
-                      handleLogin={handleLogin}
-                    />
-                  }
-                />
-                <Route
-                  path="/profile"
-                  element={<ProtectedRoute element={<Profile />} />}
-                />
-                <Route
-                  path="/song/:id"
-                  element={<ProtectedRoute element={<SongDetails />} />}
-                />
-              </Routes>
-            </div>
-            <AudioPlayer />
+      <div style={styles.app_container}>
+        <Sidebar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
+        <div style={styles.main_content}>
+          <Navbar
+            isLoggedIn={isLoggedIn}
+            setIsLoggedIn={setIsLoggedIn}
+            onLogout={handleLogout}
+          />
+          <div style={styles.content_container}>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route
+                path="/login"
+                element={
+                  <Login
+                    setIsLoggedIn={setIsLoggedIn}
+                    handleLogin={handleLogin}
+                  />
+                }
+              />
+              <Route
+                path="/profile"
+                element={<ProtectedRoute element={<Profile />} />}
+              />
+              <Route
+                path="/song/:id"
+                element={<ProtectedRoute element={<SongDetails />} />}
+              />
+            </Routes>
           </div>
         </div>
-      </AudioProvider>
+        <AudioPlayer />
+      </div>
     </Router>
   );
 };
