@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense, lazy } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -13,6 +13,7 @@ import Sidebar from "./Sidebar";
 import SongDetails from "./SongDetails";
 import axios from "axios";
 import AudioPlayer from "./AudioPlayer";
+import Register from "./Register";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -69,6 +70,10 @@ const App = () => {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route
+                path="/register"
+                element={<Register setIsLoggedIn={setIsLoggedIn} />}
+              />
+              <Route
                 path="/login"
                 element={
                   <Login
@@ -81,10 +86,7 @@ const App = () => {
                 path="/profile"
                 element={<ProtectedRoute element={<Profile />} />}
               />
-              <Route
-                path="/song/:id"
-                element={<ProtectedRoute element={<SongDetails />} />}
-              />
+              <Route path="/song/:id" element={<SongDetails />} />
             </Routes>
           </div>
         </div>

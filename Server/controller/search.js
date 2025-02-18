@@ -63,4 +63,43 @@ const playlistSearch = async (req, res) => {
   }
 };
 
-export { songSearch, playlistSearch };
+const mySongs = async (req, res) => {
+  let userId;
+
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: "User not authenticated",
+      });
+    }
+
+    userId = req.user._id; // Assign userId only if req.user is defined
+    console.log("User ID:", userId); // Log the userId to verify it's correct
+
+    const songs = await Song.find({ userId }).populate("userId", "name email");
+
+    if (songs.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No songs found for this user",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      songs,
+    });
+  } catch (error) {
+    console.error("Error fetching songs:", error.message); // Print the error message
+    console.error(error.stack); // Log the full stack trace
+
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching songs",
+      userId: userId || "User ID not defined", // Send userId or a fallback message
+    });
+  }
+};
+
+export { songSearch, playlistSearch, mySongs };

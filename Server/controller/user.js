@@ -110,6 +110,16 @@ const Logout = async (req, res) => {
 
 // Profile management
 
+const getProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    res.status(400).send(error);
+    console.log(error);
+  }
+};
+
 const UpdateProfile = async (req, res) => {
   const { name, email } = req.body;
 
@@ -340,4 +350,5 @@ export {
   BanAccount,
   SuspendAccount,
   CheckSuspension,
+  getProfile,
 };

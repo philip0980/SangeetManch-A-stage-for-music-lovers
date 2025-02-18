@@ -28,10 +28,6 @@ const AudioPlayer = () => {
     }
   }, [songUrl]);
 
-  if (!songUrl) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div style={styles.playerContainer}>
       <ReactAudioPlayer

@@ -26,9 +26,12 @@ const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
       {/* Right Side: Login Button */}
       <div style={styles.rightSection}>
         {!isLoggedIn ? (
-          <Link to="/login" style={styles.loginLink}>
-            Login
-          </Link>
+          <div>
+            <Link to="/login" style={styles.loginLink}>
+              Login
+            </Link>
+            <Link to="/register">Register</Link>
+          </div>
         ) : (
           <div>
             <button onClick={handleLogout} style={styles.loginLink}>
