@@ -14,10 +14,14 @@ import SongDetails from "./SongDetails";
 import axios from "axios";
 import AudioPlayer from "./AudioPlayer";
 import Register from "./Register";
+import UploadSong from "./UploadSong";
+import CreatePlaylist from "./CreatePlaylist";
+import PlaylistContain from "./PlaylistContain";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [songs, setSongs] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -65,14 +69,19 @@ const App = () => {
             isLoggedIn={isLoggedIn}
             setIsLoggedIn={setIsLoggedIn}
             onLogout={handleLogout}
+            setSearchQuery={setSearchQuery}
           />
           <div style={styles.content_container}>
             <Routes>
-              <Route path="/" element={<HomePage />} />
+              <Route
+                path="/"
+                element={<HomePage searchQuery={searchQuery} />}
+              />
               <Route
                 path="/register"
                 element={<Register setIsLoggedIn={setIsLoggedIn} />}
               />
+              <Route path="/upload-song" element={<UploadSong />} />
               <Route
                 path="/login"
                 element={
@@ -87,6 +96,11 @@ const App = () => {
                 element={<ProtectedRoute element={<Profile />} />}
               />
               <Route path="/song/:id" element={<SongDetails />} />
+              <Route
+                path="/playlist-contain/:id"
+                element={<PlaylistContain />}
+              />
+              <Route path="/create-playlist" element={<CreatePlaylist />} />
             </Routes>
           </div>
         </div>

@@ -1,31 +1,66 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom"; // For navigation using React Router
 
-const Sidebar = ({ isLoggedIn, handleLogout }) => {
+const Sidebar = () => {
+  const [playlist, setPlaylist] = useState([]);
+
+  const getMyPlaylist = async () => {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(
+      "http://localhost:8000/api/v1/playlist/my-playlist",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log(response.data.playlist);
+    setPlaylist(response.data.playlist);
+  };
+
+  useEffect(() => {
+    getMyPlaylist();
+  }, []);
+
   return (
     <div style={styles.sidebar}>
       <div style={styles.logo}>
-        <h1>
-          <Link to="/">Musify</Link>
-        </h1>
+        <p>
+          <Link to="/">
+            <img src="../public/logo2.png" alt="logo" width={60} height={60} />
+          </Link>
+        </p>
       </div>
       <hr style={{ marginBottom: "20px" }} />
       <div style={styles.navLinks}>
         <Link to="/" style={styles.link}>
           Home
         </Link>
-        <Link to="/profile" style={styles.link}>
-          Profile
+        <Link to="/create-playlist" style={styles.link}>
+          Create Playlist
         </Link>
-        {!isLoggedIn ? (
-          <Link to="/login" style={styles.link}>
-            Login
-          </Link>
-        ) : (
-          <button onClick={handleLogout} style={styles.link}>
-            Logout
-          </button>
-        )}
+      </div>
+      <p style={{ textAlign: "center", marginTop: "3rem" }}>My Playlist</p>
+      <hr />
+      <div>
+        {playlist.map((list) => (
+          <div
+            style={{
+              border: "1px solid white",
+              padding: "10px",
+              lineHeight: "0.4",
+              margin: "5px",
+            }}
+          >
+            <Link to={`/playlist-contain/${list._id}`}>
+              <h3>{list.name}</h3>
+              <p>{list.description}</p>
+            </Link>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -47,7 +82,7 @@ const styles = {
   },
   logo: {
     fontSize: "0.5rem",
-    marginBottom: "35px",
+    paddingBottom: "2px",
     textAlign: "center",
   },
   navLinks: {

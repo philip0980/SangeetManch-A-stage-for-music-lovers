@@ -2,12 +2,21 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const HomePage = () => {
+const HomePage = ({ searchQuery }) => {
   const [songs, setSongs] = useState([]);
+  const [filteredSongs, setFilteredSongs] = useState([]);
 
   useEffect(() => {
     fetchSongs();
   }, []);
+
+  useEffect(() => {
+    if (searchQuery) {
+      filterSongs(searchQuery);
+    } else {
+      setFilteredSongs(songs); // Display all songs if there's no search query
+    }
+  }, [searchQuery, songs]);
 
   const fetchSongs = async () => {
     try {
@@ -15,16 +24,28 @@ const HomePage = () => {
         "http://localhost:8000/api/v1/song/all-songs"
       );
       setSongs(response.data.songs);
+      setFilteredSongs(response.data.songs);
     } catch (error) {
       console.error("Error fetching songs", error);
     }
+  };
+
+  const filterSongs = (query) => {
+    const lowerQuery = query.toLowerCase();
+    const filtered = songs.filter(
+      (song) =>
+        song.title.toLowerCase().includes(lowerQuery) ||
+        song.album.toLowerCase().includes(lowerQuery) ||
+        song.genre.toLowerCase().includes(lowerQuery)
+    );
+    setFilteredSongs(filtered);
   };
 
   const handleSongClick = () => {};
 
   return (
     <div style={styles.container}>
-      {songs.map((song) => (
+      {filteredSongs.map((song) => (
         <div key={song._id} style={styles.songCard}>
           <Link to={`/song/${song._id}`} onClick={() => handleSongClick(song)}>
             <img

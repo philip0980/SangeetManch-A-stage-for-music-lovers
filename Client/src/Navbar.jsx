@@ -1,10 +1,21 @@
-import React from "react";
-import { Link } from "react-router-dom"; // For navigation using React Router
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom"; // For navigation using React Router
+import axios from "axios";
 
-const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
+const Navbar = ({ isLoggedIn, setIsLoggedIn, setSearchQuery }) => {
+  const [query, setQuery] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setQuery(e.target.value);
+    setSearchQuery(value);
+  };
+
   const handleLogout = () => {
     setIsLoggedIn(false);
   };
+
   return (
     <nav style={styles.navbar}>
       {/* Logo */}
@@ -18,7 +29,9 @@ const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
       <div style={styles.searchBar}>
         <input
           type="text"
-          placeholder="Song , Album , Genre..."
+          value={query}
+          onChange={handleSearchChange}
+          placeholder="Search by Song, Album, Genre"
           style={styles.searchInput}
         />
       </div>

@@ -28,7 +28,7 @@ router.post("/logout", Logout);
 
 // Profile management
 router.get("/profile", isAuthenticated, getProfile);
-router.put("/update-profile", isAuthenticated, UpdateProfile);
+router.patch("/update-profile", isAuthenticated, UpdateProfile);
 router.post("/reset-password", isAuthenticated, ChangePassword);
 router.delete("/delete-account", isAuthenticated, DeleteAccount);
 

@@ -32,7 +32,7 @@ const AudioPlayer = () => {
     <div style={styles.playerContainer}>
       <ReactAudioPlayer
         src={songUrl}
-        autoPlay={true}
+        autoPlay={false}
         controls={true}
         onPlay={() => console.log("Playing")}
         onPause={() => console.log("Paused")}
