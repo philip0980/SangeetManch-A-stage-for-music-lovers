@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import AddSongButton from "./AddToPlaylist";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
@@ -7,6 +8,7 @@ const SongDetailsPage = () => {
   const [songDetails, setSongDetails] = useState(null);
   const [song, setSong] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [playlist, setPlaylist] = useState([]);
   const [updatedSong, setUpdatedSong] = useState({
     title: "",
     artist: "",
@@ -16,13 +18,37 @@ const SongDetailsPage = () => {
   });
 
   useEffect(() => {
+    const getPlaylist = async () => {
+      const token = localStorage.getItem("token");
+
+      const response = await axios.get(
+        "http://localhost:8000/api/v1/playlist/my-playlist",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        console.log("Playlist", response.data.playlist);
+        setPlaylist(response.data.playlist);
+      }
+    };
+    getPlaylist();
+  }, []);
+
+  useEffect(() => {
     const fetchSongDetails = async () => {
       try {
         const response = await axios.get(
           `http://localhost:8000/api/v1/song/stream/${id}`
         );
         setSongDetails(response.data.song);
-        setSong(response.data.song.fileUrl); // Set the song URL for playback
+        setSong(response.data.song.fileUrl);
+        localStorage.setItem("currentSong", response.data.song.fileUrl);
+        console.log(response.data.song.fileUrl);
         setUpdatedSong({
           title: response.data.song.title,
           artist: response.data.song.artist,
@@ -55,7 +81,7 @@ const SongDetailsPage = () => {
 
       const response = await axios.patch(
         `http://localhost:8000/api/v1/song/patch/${id}`,
-        updatedSong, // Send the updated song details
+        updatedSong,
         {
           headers: {
             Authorization: `Bearer ${token}`, // Ensure that the token is passed
@@ -92,6 +118,10 @@ const SongDetailsPage = () => {
       >
         {isEditing ? "Cancel" : "Edit"}
       </button>
+
+      <div>
+        <AddSongButton songId={id} />
+      </div>
 
       {isEditing ? (
         <form onSubmit={handleUpdateSubmit} style={styles.form}>
@@ -166,14 +196,6 @@ const SongDetailsPage = () => {
           </p>
         </div>
       )}
-
-      {/* Audio Player */}
-      <div style={styles.audioPlayerContainer}>
-        <audio controls style={styles.audioPlayer}>
-          <source src={song} type="audio/mp3" />
-          Your browser does not support the audio element.
-        </audio>
-      </div>
     </div>
   );
 };

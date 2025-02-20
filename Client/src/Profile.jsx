@@ -158,7 +158,16 @@ const Profile = () => {
         </div>
         <div className="songs-list">
           {mySongs.map((song) => (
-            <div key={song._id} className="song-card">
+            <div
+              key={song._id}
+              className="song-card"
+              style={{
+                display: "flex",
+                width: "100%",
+                flexWrap: "wrap",
+                gap: "20px",
+              }}
+            >
               <Link
                 to={`/song/${song._id}`}
                 onClick={() => handleSongClick(song)}

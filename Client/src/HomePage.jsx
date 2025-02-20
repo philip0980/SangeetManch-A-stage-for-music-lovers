@@ -14,7 +14,7 @@ const HomePage = ({ searchQuery }) => {
     if (searchQuery) {
       filterSongs(searchQuery);
     } else {
-      setFilteredSongs(songs); // Display all songs if there's no search query
+      setFilteredSongs(songs);
     }
   }, [searchQuery, songs]);
 
@@ -41,21 +41,21 @@ const HomePage = ({ searchQuery }) => {
     setFilteredSongs(filtered);
   };
 
-  const handleSongClick = () => {};
-
   return (
     <div style={styles.container}>
       {filteredSongs.map((song) => (
         <div key={song._id} style={styles.songCard}>
-          <Link to={`/song/${song._id}`} onClick={() => handleSongClick(song)}>
+          <Link to={`/song/${song._id}`}>
             <img
               src={song.coverImageUrl}
               alt={song.title}
               style={styles.coverImage}
             />
             <div style={styles.textContainer}>
-              <p style={styles.title}>{song.title}</p>
-              <p style={styles.genre}>{song.genre}</p>
+              <div>
+                <p style={styles.title}>{song.title}</p>
+                <p style={styles.genre}>{song.genre}</p>
+              </div>
             </div>
           </Link>
         </div>
@@ -88,6 +88,8 @@ const styles = {
   },
   textContainer: {
     padding: "15px",
+    display: "flex",
+    gap: "40px",
   },
   title: {
     fontSize: "1.2rem",
@@ -99,6 +101,10 @@ const styles = {
     fontSize: "1rem",
     color: "#ccc",
     margin: "0",
+  },
+  list: {
+    border: "1px solid green",
+    borderRadius: "5px",
   },
 };
 

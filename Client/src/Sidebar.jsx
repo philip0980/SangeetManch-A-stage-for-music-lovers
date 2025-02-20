@@ -30,7 +30,7 @@ const Sidebar = () => {
       <div style={styles.logo}>
         <p>
           <Link to="/">
-            <img src="../public/logo2.png" alt="logo" width={60} height={60} />
+            <img src="../logo2.png" alt="logo" width={60} height={60} />
           </Link>
         </p>
       </div>
