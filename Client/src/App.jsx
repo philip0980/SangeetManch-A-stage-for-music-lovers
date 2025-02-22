@@ -17,6 +17,7 @@ import Register from "./Register";
 import UploadSong from "./UploadSong";
 import CreatePlaylist from "./CreatePlaylist";
 import PlaylistContain from "./PlaylistContain";
+import ChangePassword from "./ChangePassword";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -81,6 +82,7 @@ const App = () => {
                 path="/register"
                 element={<Register setIsLoggedIn={setIsLoggedIn} />}
               />
+              <Route path="/change-password" element={<ChangePassword />} />
               <Route path="/upload-song" element={<UploadSong />} />
               <Route
                 path="/login"
@@ -93,7 +95,11 @@ const App = () => {
               />
               <Route
                 path="/profile"
-                element={<ProtectedRoute element={<Profile />} />}
+                element={
+                  <ProtectedRoute
+                    element={<Profile handleLogin={handleLogout} />}
+                  />
+                }
               />
               <Route path="/song/:id" element={<SongDetails />} />
               <Route

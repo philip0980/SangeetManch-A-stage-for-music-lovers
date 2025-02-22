@@ -3,13 +3,15 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Profile.css"; // Import CSS file for styling
 
-const Profile = () => {
+const Profile = ({ handleLogout }) => {
   const [profile, setProfile] = useState({});
   const [mySongs, setMySongs] = useState([]);
   const [message, setMessage] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -77,12 +79,46 @@ const Profile = () => {
     getMySongs();
   }, []);
 
+  const deleteAccount = async () => {
+    try {
+      const response = await axios.delete(
+        "http://localhost:8000/api/v1/user/delete-account",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          data: { password }, // Send the password for verification
+        }
+      );
+      if (response.status === 200) {
+        setMessage("Account deleted successfully.");
+        handleLogout();
+        navigate("/"); // Redirect to logout or home page
+      }
+    } catch (error) {
+      console.error("Error deleting account", error);
+      setMessage("Failed to delete account. Please check your password.");
+    }
+  };
+
   const handleSongClick = (song) => {
     // Handle song click logic
   };
 
   const handleUpload = () => {
     navigate("/upload-song");
+  };
+
+  const handleChangePassword = () => {
+    navigate("/change-password");
+  };
+
+  const handleDeleteAccount = () => {
+    setShowModal(true);
+  };
+
+  const handleCancelModal = () => {
+    setShowModal(false); // Close the modal
   };
 
   return (
@@ -149,12 +185,23 @@ const Profile = () => {
       <div className="songs-section">
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <h2>Your Songs</h2>
-          <button
-            style={{ backgroundColor: "red", height: "40px" }}
-            onClick={handleUpload}
-          >
-            Upload
-          </button>
+          <div>
+            <button
+              style={{ backgroundColor: "red", height: "40px" }}
+              onClick={handleUpload}
+            >
+              Upload
+            </button>
+            <button
+              style={{ background: "green" }}
+              onClick={handleChangePassword}
+            >
+              Change password
+            </button>
+            <button style={{ background: "red" }} onClick={handleDeleteAccount}>
+              Delete Account
+            </button>
+          </div>
         </div>
         <div className="songs-list">
           {mySongs.map((song) => (
@@ -183,6 +230,22 @@ const Profile = () => {
           ))}
         </div>
       </div>
+
+      {showModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <h3>Confirm Account Deletion</h3>
+            <input
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button onClick={deleteAccount}>Delete Account</button>
+            <button onClick={handleCancelModal}>Cancel</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
