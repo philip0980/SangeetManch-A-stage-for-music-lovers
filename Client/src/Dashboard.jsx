@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { BASE_URL } from "./URLs";
 
 const token = localStorage.getItem("token");
 
@@ -16,13 +17,10 @@ const Dashboard = () => {
         throw new Error("No token found");
       }
       try {
-        const response = await axios.get(
-          "http://localhost:8000/api/v1/user/all-users",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-            withCredentials: true,
-          }
-        );
+        const response = await axios.get(`${BASE_URL}/api/v1/user/all-users`, {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        });
         setUser(response.data.users);
       } catch (error) {
         console.log(error);
@@ -36,13 +34,10 @@ const Dashboard = () => {
 
   const song = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8000/api/v1/song/all-songs",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`${BASE_URL}/api/v1/song/all-songs`, {
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
+      });
       setSongs(response.data.songs);
     } catch (error) {
       console.log(error);
@@ -52,7 +47,7 @@ const Dashboard = () => {
   const playlist = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8000/api/v1/playlist/find-playlist",
+        `${BASE_URL}/api/v1/playlist/find-playlist`,
         {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
@@ -79,7 +74,7 @@ const Dashboard = () => {
   const fetchSongDetails = async (songId) => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/v1/song/stream/${songId}`,
+        `${BASE_URL}/api/v1/song/stream/${songId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

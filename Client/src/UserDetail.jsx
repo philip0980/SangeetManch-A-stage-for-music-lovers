@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { BASE_URL } from "./URLs";
 
 const UserDetail = () => {
   const { id } = useParams();
@@ -21,7 +22,7 @@ const UserDetail = () => {
   const getSingleUser = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/v1/user/single-user/${id}`,
+        `${BASE_URL}/api/v1/user/single-user/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -38,7 +39,7 @@ const UserDetail = () => {
   const getUserSongs = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/v1/song/their-song/${id}`,
+        `${BASE_URL}/api/v1/song/their-song/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -60,7 +61,7 @@ const UserDetail = () => {
     setLoading(true);
     try {
       await axios.post(
-        `http://localhost:8000/api/v1/user/suspend/${id}`,
+        `${BASE_URL}/api/v1/user/suspend/${id}`,
         { reason, duration },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -83,7 +84,7 @@ const UserDetail = () => {
     setLoading(true);
     try {
       await axios.post(
-        `http://localhost:8000/api/v1/user/ban/${id}`,
+        `${BASE_URL}/api/v1/user/ban/${id}`,
         { password },
         {
           headers: { Authorization: `Bearer ${token}` },

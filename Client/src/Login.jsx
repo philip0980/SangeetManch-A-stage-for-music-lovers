@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import { BASE_URL } from "./URLs";
 
 const Login = ({ handleLogin, setIsLoggedIn }) => {
   const [email, setEmail] = useState("");
@@ -27,13 +28,10 @@ const Login = ({ handleLogin, setIsLoggedIn }) => {
     setError("");
 
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/v1/user/login",
-        {
-          email: email,
-          password: password,
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/api/v1/user/login`, {
+        email: email,
+        password: password,
+      });
 
       if (response.status === 200 && response.data && response.data.token) {
         handleLogin(response.data.token);

@@ -20,6 +20,7 @@ import PlaylistContain from "./PlaylistContain";
 import ChangePassword from "./ChangePassword";
 import Dashboard from "./Dashboard";
 import UserDetail from "./UserDetail";
+import { BASE_URL } from "./URLs";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -49,9 +50,7 @@ const App = () => {
 
   const fetchSongs = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8000/api/v1/song/all-songs"
-      );
+      const response = await axios.get(`${BASE_URL}/api/v1/song/all-songs`);
       setSongs(response.data.songs);
     } catch (error) {
       console.log("Error fetching songs", error);

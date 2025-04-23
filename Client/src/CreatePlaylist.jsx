@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { BASE_URL } from "./URLs";
 
 const CreatePlaylist = () => {
   const [name, setName] = useState("");
@@ -16,9 +17,7 @@ const CreatePlaylist = () => {
   // Fetch all available songs from the backend
   const fetchSongs = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8000/api/v1/song/all-songs"
-      );
+      const response = await axios.get(`${BASE_URL}/api/v1/song/all-songs`);
       setAllSongs(response.data.songs); // Populate the song list
     } catch (error) {
       console.error("Error fetching songs", error);
@@ -46,7 +45,7 @@ const CreatePlaylist = () => {
     try {
       const token = localStorage.getItem("token"); // Assuming user is logged in and token is stored in localStorage
       const response = await axios.post(
-        "http://localhost:8000/api/v1/playlist/create",
+        `${BASE_URL}/api/v1/playlist/create`,
         { name, description, songs },
         {
           headers: {

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "./URLs";
 
 const Register = ({ setIsLoggedIn }) => {
   const [formData, setFormData] = useState({
@@ -32,7 +33,7 @@ const Register = ({ setIsLoggedIn }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/user/register",
+        `${BASE_URL}/api/v1/user/register`,
         data,
         {
           headers: {

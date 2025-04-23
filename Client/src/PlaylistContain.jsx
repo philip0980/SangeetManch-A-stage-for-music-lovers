@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./PlaylistContain.css"; // Importing CSS file
+import { BASE_URL } from "./URLs";
 
 const PlaylistContain = () => {
   const [playlist, setPlaylist] = useState(null);
@@ -22,7 +23,7 @@ const PlaylistContain = () => {
   const fetchSongDetails = async (songId) => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/v1/song/stream/${songId}`,
+        `${BASE_URL}/api/v1/song/stream/${songId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -41,7 +42,7 @@ const PlaylistContain = () => {
   const searchSinglePlaylist = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/v1/playlist/search-single-playlist/${id}`,
+        `${BASE_URL}/api/v1/playlist/search-single-playlist/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -92,7 +93,7 @@ const PlaylistContain = () => {
     e.preventDefault();
     try {
       const response = await axios.patch(
-        `http://localhost:8000/api/v1/playlist/edit/${id}`,
+        `${BASE_URL}/api/v1/playlist/edit/${id}`,
         updatedPlaylist,
         {
           headers: {
@@ -111,7 +112,7 @@ const PlaylistContain = () => {
   const handleDelete = async () => {
     try {
       const response = await axios.delete(
-        `http://localhost:8000/api/v1/playlist/delete/${id}`,
+        `${BASE_URL}/api/v1/playlist/delete/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -133,7 +134,7 @@ const PlaylistContain = () => {
   const deleteFromPlaylist = async (songId) => {
     try {
       const response = await axios.post(
-        `http://localhost:8000/api/v1/playlist/remove-song/${id}`,
+        `${BASE_URL}/api/v1/playlist/remove-song/${id}`,
         { songId },
         {
           headers: {

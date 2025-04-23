@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { BASE_URL } from "./URLs";
 
 const ChangePassword = () => {
   const [oldPassword, setOldPass] = useState("");
@@ -19,7 +20,7 @@ const ChangePassword = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/user/reset-password",
+        `${BASE_URL}/api/v1/user/reset-password`,
         {
           oldPassword,
           newPassword,

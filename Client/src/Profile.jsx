@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Profile.css"; // Import CSS file for styling
+import { BASE_URL } from "./URLs";
 
 const Profile = ({ handleLogout }) => {
   const [profile, setProfile] = useState({});
@@ -22,15 +23,12 @@ const Profile = ({ handleLogout }) => {
       throw new Error("No token found");
     }
     try {
-      const response = await axios.get(
-        "http://localhost:8000/api/v1/user/profile",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`${BASE_URL}/api/v1/user/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      });
       setProfile(response.data.user);
       setName(response.data.user.name); // Set name from profile
       setEmail(response.data.user.email); // Set email from profile
@@ -42,7 +40,7 @@ const Profile = ({ handleLogout }) => {
   const getMySongs = async () => {
     try {
       const anotherResponse = await axios.get(
-        "http://localhost:8000/api/v1/song/my-song",
+        `${BASE_URL}/api/v1/song/my-song`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -59,7 +57,7 @@ const Profile = ({ handleLogout }) => {
   const updateProfile = async () => {
     try {
       const response = await axios.patch(
-        "http://localhost:8000/api/v1/user/update-profile",
+        `${BASE_URL}/api/v1/user/update-profile`,
         { name, email },
         {
           headers: {
@@ -82,7 +80,7 @@ const Profile = ({ handleLogout }) => {
   const deleteAccount = async () => {
     try {
       const response = await axios.delete(
-        "http://localhost:8000/api/v1/user/delete-account",
+        `${BASE_URL}/api/v1/user/delete-account`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

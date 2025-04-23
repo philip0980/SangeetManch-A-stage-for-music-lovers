@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom"; // For navigation using React Router
 import axios from "axios";
+import { BASE_URL } from "./URLs";
 
 const Navbar = ({ isLoggedIn, setIsLoggedIn, setSearchQuery }) => {
   const [query, setQuery] = useState("");
@@ -18,9 +19,7 @@ const Navbar = ({ isLoggedIn, setIsLoggedIn, setSearchQuery }) => {
 
   const logoutOnly = async () => {
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/v1/user/logout"
-      );
+      const response = await axios.post(`${BASE_URL}/api/v1/user/logout`);
       console.log(response);
       handleLogout();
     } catch (error) {

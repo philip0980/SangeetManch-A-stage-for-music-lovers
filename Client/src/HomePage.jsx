@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { BASE_URL } from "./URLs";
 
 const HomePage = ({ searchQuery }) => {
   const [songs, setSongs] = useState([]);
@@ -20,9 +21,7 @@ const HomePage = ({ searchQuery }) => {
 
   const fetchSongs = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8000/api/v1/song/all-songs"
-      );
+      const response = await axios.get(`${BASE_URL}/api/v1/song/all-songs`);
       setSongs(response.data.songs);
       setFilteredSongs(response.data.songs);
     } catch (error) {

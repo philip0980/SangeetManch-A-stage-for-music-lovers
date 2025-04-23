@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { BASE_URL } from "./URLs";
 
 const Sidebar = () => {
   const [playlist, setPlaylist] = useState([]);
@@ -8,7 +9,7 @@ const Sidebar = () => {
   const getMyPlaylist = async () => {
     const token = localStorage.getItem("token");
     const response = await axios.get(
-      "http://localhost:8000/api/v1/playlist/my-playlist",
+      `${BASE_URL}/api/v1/playlist/my-playlist`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

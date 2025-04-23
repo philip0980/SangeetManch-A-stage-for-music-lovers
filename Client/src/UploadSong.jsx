@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { BASE_URL } from "./URLs";
 
 const UploadSong = () => {
   const [formData, setFormData] = useState({
@@ -53,7 +54,7 @@ const UploadSong = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/song/upload",
+        `${BASE_URL}/api/v1/song/upload`,
         data,
         {
           headers: {

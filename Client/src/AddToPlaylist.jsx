@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { BASE_URL } from "./URLs";
 
 const AddSongButton = ({ songId }) => {
   const [playlists, setPlaylists] = useState([]);
@@ -14,7 +15,7 @@ const AddSongButton = ({ songId }) => {
     const fetchPlaylists = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/api/v1/playlist/my-playlist",
+          `${BASE_URL}/api/v1/playlist/my-playlist`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -38,7 +39,7 @@ const AddSongButton = ({ songId }) => {
 
     try {
       const response = await axios.post(
-        `http://localhost:8000/api/v1/playlist/add-song/${selectedPlaylist._id}`,
+        ` ${BASE_URL}/api/v1/playlist/add-song/${selectedPlaylist._id}`,
         { songId },
         {
           headers: {

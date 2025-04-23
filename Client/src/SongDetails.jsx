@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import AddSongButton from "./AddToPlaylist";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { BASE_URL } from "./URLs";
 
 const SongDetailsPage = () => {
   const { id } = useParams();
@@ -22,7 +23,7 @@ const SongDetailsPage = () => {
       const token = localStorage.getItem("token");
 
       const response = await axios.get(
-        "http://localhost:8000/api/v1/playlist/my-playlist",
+        `${BASE_URL}/api/v1/playlist/my-playlist`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -43,7 +44,7 @@ const SongDetailsPage = () => {
     const fetchSongDetails = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/v1/song/stream/${id}`
+          `${BASE_URL}/api/v1/song/stream/${id}`
         );
         setSongDetails(response.data.song);
         setSong(response.data.song.fileUrl);
@@ -80,7 +81,7 @@ const SongDetailsPage = () => {
       const token = localStorage.getItem("token");
 
       const response = await axios.patch(
-        `http://localhost:8000/api/v1/song/patch/${id}`,
+        `${BASE_URL}/api/v1/song/patch/${id}`,
         updatedSong,
         {
           headers: {
