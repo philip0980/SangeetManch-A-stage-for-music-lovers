@@ -22,6 +22,7 @@ const allowedOrigins = [
   "http://localhost:57927", // Flutter Web, running on localhost with port 8000
   "com.example.flutterapp", // For Flutter Android App (replace with your package name if needed)
   "https://flutterapp.com", // For production Flutter App on Android/iOS
+  "https://nistha-music-streaming-application.onrender.com" , // React Web App 
 ];
 
 // CORS middleware
