@@ -16,6 +16,18 @@ const Navbar = ({ isLoggedIn, setIsLoggedIn, setSearchQuery }) => {
     setIsLoggedIn(false);
   };
 
+  const logoutOnly = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/v1/user/logout"
+      );
+      console.log(response);
+      handleLogout();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <nav style={styles.navbar}>
       {/* Logo */}
@@ -43,14 +55,16 @@ const Navbar = ({ isLoggedIn, setIsLoggedIn, setSearchQuery }) => {
             <Link to="/login" style={styles.loginLink}>
               Login
             </Link>
-            <Link to="/register">Register</Link>
+            <Link to="/register" style={{ margin: "10px" }}>
+              Register
+            </Link>
           </div>
         ) : (
           <div>
-            <button onClick={handleLogout} style={styles.loginLink}>
+            <button onClick={logoutOnly} style={styles.loginLink}>
               Logout
             </button>
-            <Link to="/profile" style={{ marginLeft: "10px" }}>
+            <Link to="/profile" style={{ margin: "10px" }}>
               Profile
             </Link>
           </div>
@@ -65,7 +79,7 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#333",
+    backgroundColor: "#1e1e2f",
     color: "#fff",
     width: "calc(100vw - 250px)",
     height: "12vh",

@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom"; // For navigation using React Router
+import { Link } from "react-router-dom";
 
 const Sidebar = () => {
   const [playlist, setPlaylist] = useState([]);
@@ -17,7 +17,6 @@ const Sidebar = () => {
       }
     );
 
-    console.log(response.data.playlist);
     setPlaylist(response.data.playlist);
   };
 
@@ -28,13 +27,11 @@ const Sidebar = () => {
   return (
     <div style={styles.sidebar}>
       <div style={styles.logo}>
-        <p>
-          <Link to="/">
-            <img src="../logo1.png" alt="logo" width={60} height={60} />
-          </Link>
-        </p>
+        <Link to="/">
+          <img src="../logo1.png" alt="Logo" style={styles.logoImage} />
+        </Link>
       </div>
-      <hr style={{ marginBottom: "20px" }} />
+      <hr style={styles.hr} />
       <div style={styles.navLinks}>
         <Link to="/" style={styles.link}>
           Home
@@ -43,21 +40,17 @@ const Sidebar = () => {
           Create Playlist
         </Link>
       </div>
-      <p style={{ textAlign: "center", marginTop: "3rem" }}>My Playlist</p>
-      <hr />
-      <div>
+      <p style={styles.playlistTitle}>My Playlists</p>
+      <hr style={styles.hr} />
+      <div style={styles.playlistContainer}>
         {playlist.map((list) => (
-          <div
-            style={{
-              border: "1px solid white",
-              padding: "10px",
-              lineHeight: "0.4",
-              margin: "5px",
-            }}
-          >
-            <Link to={`/playlist-contain/${list._id}`}>
-              <h3>{list.name}</h3>
-              <p>{list.description}</p>
+          <div key={list._id} style={styles.playlistItem}>
+            <Link
+              to={`/playlist-contain/${list._id}`}
+              style={styles.playlistLink}
+            >
+              <h3 style={styles.playlistName}>{list.name}</h3>
+              <p style={styles.playlistDesc}>{list.description}</p>
             </Link>
           </div>
         ))}
@@ -68,34 +61,83 @@ const Sidebar = () => {
 
 const styles = {
   sidebar: {
-    position: "fixed", // Sidebar stays in place
+    position: "fixed",
     top: 0,
     left: 0,
-    width: "250px", // Sidebar width
-    height: "100%", // Full height
-    backgroundColor: "#333",
+    width: "260px",
+    height: "100vh",
+    backgroundColor: "#1e1e2f",
     color: "#fff",
-    padding: "20px",
+    padding: "20px 15px",
     boxSizing: "border-box",
-    overflowY: "auto", // Make sidebar scrollable if needed
-    borderRight: "1px solid white",
+    overflowY: "auto",
+    borderRight: "1px solid #444",
+    fontFamily: "'Poppins', sans-serif",
   },
   logo: {
-    fontSize: "0.5rem",
-    paddingBottom: "2px",
     textAlign: "center",
+    marginBottom: "20px",
+  },
+  logoImage: {
+    width: "70px",
+    height: "70px",
+    objectFit: "contain",
+    cursor: "pointer",
+  },
+  hr: {
+    border: "none",
+    height: "1px",
+    backgroundColor: "#444",
+    margin: "20px 0",
   },
   navLinks: {
     display: "flex",
     flexDirection: "column",
+    gap: "12px",
+    marginBottom: "30px",
   },
   link: {
-    color: "#fff",
+    color: "#ccc",
     textDecoration: "none",
-    marginBottom: "15px",
-    padding: "10px",
-    backgroundColor: "#444",
-    borderRadius: "5px",
+    padding: "12px",
+    backgroundColor: "#2a2a3b",
+    borderRadius: "8px",
+    fontWeight: "500",
+    transition: "all 0.3s ease",
+  },
+  playlistTitle: {
+    textAlign: "center",
+    margin: "25px 0 10px",
+    fontSize: "18px",
+    fontWeight: "bold",
+    letterSpacing: "0.5px",
+    color: "#aaa",
+  },
+  playlistContainer: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+  },
+  playlistItem: {
+    backgroundColor: "#2a2a3b",
+    padding: "12px",
+    borderRadius: "8px",
+    transition: "transform 0.2s",
+    cursor: "pointer",
+  },
+  playlistLink: {
+    textDecoration: "none",
+    color: "inherit",
+  },
+  playlistName: {
+    margin: 0,
+    fontSize: "16px",
+    fontWeight: "600",
+  },
+  playlistDesc: {
+    margin: "4px 0 0",
+    fontSize: "13px",
+    color: "#aaa",
   },
 };
 

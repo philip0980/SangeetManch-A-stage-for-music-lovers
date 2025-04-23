@@ -1,147 +1,176 @@
+import 'package:client_flutter/change_password.dart';
+import 'package:client_flutter/dashboard_screen.dart';
+import 'package:client_flutter/login.dart';
+import 'package:client_flutter/profile.dart';
+import 'package:client_flutter/register.dart';
+import 'package:client_flutter/setting.dart';
+import 'package:client_flutter/song-list-screen.dart';
+import 'package:client_flutter/upload_song_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:audioplayers/audioplayers.dart'; // Import the audioplayers package
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: "Music Player",
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const Music(),
-    );
-  }
-}
-
-class Music extends StatelessWidget {
-  const Music({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Music App')),
-      body: const FetchDataPage(),
-    );
-  }
-}
-
-class FetchDataPage extends StatefulWidget {
-  const FetchDataPage({super.key});
-
-  @override
-  State<FetchDataPage> createState() => _FetchDataPageState();
-}
-
-class _FetchDataPageState extends State<FetchDataPage> {
-  late Future<List<Song>> futureSongs;
-  final AudioPlayer _audioPlayer =
-      AudioPlayer(); // Create an AudioPlayer instance
-
-  @override
-  void initState() {
-    super.initState();
-    futureSongs = fetchSongs();
-  }
-
-  Future<List<Song>> fetchSongs() async {
-    final response = await http.get(
-      Uri.parse('http://localhost:8000/api/v1/song/all-songs'),
-    );
-
-    if (response.statusCode == 200) {
-      // Parse the JSON response
-      Map<String, dynamic> data = json.decode(response.body);
-
-      if (data['songs'] == null) {
-        return []; // Return an empty list if 'songs' is null
-      }
-
-      List<dynamic> songList = data['songs'];
-
-      return songList.map((json) => Song.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to load songs');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List<Song>>(
-      future: futureSongs,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No songs found.'));
-        } else {
-          // Display the list of songs
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              final song = snapshot.data![index];
-              return ListTile(
-                leading: Image.network(
-                  song.coverImageUrl,
-                ), // Display cover image
-                title: Text(song.title),
-                subtitle: Text(song.artist),
-                onTap: () async {
-                  // Play the song when it's tapped
-                  await _audioPlayer.play(UrlSource(song.fileUrl));
-                  print('Playing song: ${song.title}');
-                },
-              );
-            },
-          );
-        }
+      initialRoute: '/login', // Start with login screen
+      routes: {
+        '/login': (context) => Login(),
+        '/register': (context) => Register(),
+        '/main': (context) => MainScreen(), // Main app screen
+        '/dashboard': (context) => DashboardScreen(), // Dashboard screen
+        '/upload-song': (context) => UploadSongScreen(),
+        '/change-password': (context) => ResetPasswordScreen(),
       },
     );
   }
 }
 
-class Song {
-  final String id;
-  final String title;
-  final String artist;
-  final String album;
-  final String genre;
-  final int duration;
-  final String fileUrl;
-  final String coverImageUrl;
+class MainScreen extends StatefulWidget {
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
 
-  Song({
-    required this.id,
-    required this.title,
-    required this.artist,
-    required this.album,
-    required this.genre,
-    required this.duration,
-    required this.fileUrl,
-    required this.coverImageUrl,
-  });
+class _MainScreenState extends State<MainScreen> {
+  int _selectedIndex = 0;
+  bool _isLoggedIn = false;
+  String? _role; // To store the role
 
-  factory Song.fromJson(Map<String, dynamic> json) {
-    return Song(
-      id: json['_id'] ?? '',
-      title: json['title'] ?? '',
-      artist: json['artist'] ?? '',
-      album: json['album'] ?? '',
-      genre: json['genre'] ?? '',
-      duration: json['duration'] ?? 0,
-      fileUrl: json['fileUrl'] ?? '',
-      coverImageUrl: json['coverImageUrl'] ?? '',
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final role = prefs.getString('role'); // Fetch role too
+
+    setState(() {
+      _isLoggedIn = token != null;
+      _role = role;
+    });
+  }
+
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    if (token == null) return;
+
+    final url = Uri.parse("http://10.0.2.2:8000/api/v1/user/logout");
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        await prefs.remove('token');
+        await prefs.remove('role'); // remove role on logout too
+        setState(() {
+          _isLoggedIn = false;
+          _role = null;
+        });
+
+        Navigator.pushReplacementNamed(context, '/login');
+      } else {
+        print("Logout failed: ${response.body}");
+      }
+    } catch (e) {
+      print("Logout error: $e");
+    }
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  final List<Widget> _pages = [SongListScreen(), ProfilePage(), SettingsPage()];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Padding(
+          padding: const EdgeInsets.only(left: 10.0),
+          child: Image.asset('assets/images/logo2.png', height: 35),
+        ),
+        backgroundColor: Color(0xFF1e1e2f),
+        foregroundColor: const Color.fromARGB(255, 214, 206, 206),
+        actions: [
+          if (_isLoggedIn && _role == 'admin') // Only for admin
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GestureDetector(
+                child: Text("Dashboard"),
+                onTap: () {
+                  Navigator.pushNamed(context, '/dashboard');
+                },
+              ),
+            ),
+          _isLoggedIn
+              ? Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: GestureDetector(child: Text("Logout"), onTap: _logout),
+              )
+              : Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: GestureDetector(
+                      child: Text("Login"),
+                      onTap: () {
+                        Navigator.of(context).pushNamed('/login');
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: GestureDetector(
+                      child: Text("Register"),
+                      onTap: () {
+                        Navigator.of(context).pushNamed('/register');
+                      },
+                    ),
+                  ),
+                ],
+              ),
+        ],
+      ),
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.music_note), label: 'Songs'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+        selectedItemColor: Color(0xFF1e1e2f),
+        unselectedItemColor: Colors.grey,
+      ),
     );
   }
 }

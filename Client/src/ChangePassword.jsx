@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios"; // Don't forget to import axios
+import axios from "axios";
 
 const ChangePassword = () => {
   const [oldPassword, setOldPass] = useState("");
@@ -11,7 +11,7 @@ const ChangePassword = () => {
   const token = localStorage.getItem("token");
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent page reload on form submit
+    e.preventDefault();
     if (newPassword !== cNewPassword) {
       setError("New password and confirmation don't match!");
       return;
@@ -27,14 +27,17 @@ const ChangePassword = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Fixed typo here
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         }
       );
       if (response.status === 200) {
-        setMessage("Password changed successfully");
-        setError(""); // Clear any previous error
+        setMessage("Password changed successfully!");
+        setError("");
+        setOldPass("");
+        setNewPass("");
+        setCNewPass("");
       }
     } catch (error) {
       console.log("Error changing password", error);
@@ -43,29 +46,111 @@ const ChangePassword = () => {
   };
 
   return (
-    <>
-      <h2>Change Password</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="password"
-          placeholder="Old Password"
-          onChange={(e) => setOldPass(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="New Password"
-          onChange={(e) => setNewPass(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Confirm New Password"
-          onChange={(e) => setCNewPass(e.target.value)}
-        />
-        {error && <div style={{ color: "red" }}>{error}</div>}
-        {message && <div style={{ color: "green" }}>{message}</div>}
-        <button type="submit">Change Password</button>
-      </form>
-    </>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "80vh",
+        backgroundColor: "white",
+        padding: "20px",
+        marginTop: "-50px",
+      }}
+    >
+      <div
+        style={{
+          backgroundColor: "#fff",
+          padding: "40px",
+          borderRadius: "10px",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+          width: "100%",
+          maxWidth: "380px",
+        }}
+      >
+        <h2
+          style={{
+            textAlign: "center",
+            marginBottom: "30px",
+            color: "#333",
+          }}
+        >
+          Change Password
+        </h2>
+
+        <form
+          onSubmit={handleSubmit}
+          style={{ display: "flex", flexDirection: "column", gap: "15px" }}
+        >
+          <input
+            type="password"
+            placeholder="Old Password"
+            value={oldPassword}
+            onChange={(e) => setOldPass(e.target.value)}
+            style={{
+              padding: "12px",
+              borderRadius: "6px",
+              border: "1px solid #ccc",
+              fontSize: "16px",
+            }}
+            required
+          />
+          <input
+            type="password"
+            placeholder="New Password"
+            value={newPassword}
+            onChange={(e) => setNewPass(e.target.value)}
+            style={{
+              padding: "12px",
+              borderRadius: "6px",
+              border: "1px solid #ccc",
+              fontSize: "16px",
+            }}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Confirm New Password"
+            value={cNewPassword}
+            onChange={(e) => setCNewPass(e.target.value)}
+            style={{
+              padding: "12px",
+              borderRadius: "6px",
+              border: "1px solid #ccc",
+              fontSize: "16px",
+            }}
+            required
+          />
+
+          {error && (
+            <div style={{ color: "#e74c3c", textAlign: "center" }}>{error}</div>
+          )}
+          {message && (
+            <div style={{ color: "#2ecc71", textAlign: "center" }}>
+              {message}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            style={{
+              marginTop: "10px",
+              backgroundColor: "#3498db",
+              color: "#fff",
+              padding: "12px",
+              border: "none",
+              borderRadius: "6px",
+              fontSize: "16px",
+              cursor: "pointer",
+              transition: "background-color 0.3s ease",
+            }}
+            onMouseOver={(e) => (e.target.style.backgroundColor = "#2980b9")}
+            onMouseOut={(e) => (e.target.style.backgroundColor = "#3498db")}
+          >
+            Change Password
+          </button>
+        </form>
+      </div>
+    </div>
   );
 };
 

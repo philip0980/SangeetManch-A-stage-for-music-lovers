@@ -142,4 +142,28 @@ const myPlaylist = async (req, res) => {
   }
 };
 
-export { songSearch, playlistSearch, mySongs, myPlaylist };
+const theirSong = async (req, res) => {
+  let userId;
+  try {
+    const { id } = req.params;
+
+    userId = id;
+    const songs = await Song.find({ userId }).populate("userId", "name email");
+
+    if (songs.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No songs found for this user",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      songs,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export { songSearch, playlistSearch, mySongs, myPlaylist, theirSong };

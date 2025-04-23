@@ -183,26 +183,166 @@ const Profile = ({ handleLogout }) => {
       </div>
 
       <div className="songs-section">
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <h2>Your Songs</h2>
-          <div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "20px",
+            flexWrap: "wrap",
+          }}
+        >
+          <h2 style={{ fontSize: "28px", color: "#333", margin: "0" }}>
+            Your Songs
+          </h2>
+
+          <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
             <button
-              style={{ backgroundColor: "red", height: "40px" }}
+              style={{
+                backgroundColor: "#e74c3c",
+                color: "#fff",
+                border: "none",
+                padding: "10px 20px",
+                borderRadius: "5px",
+                fontSize: "16px",
+                cursor: "pointer",
+                height: "40px",
+                minWidth: "120px",
+              }}
               onClick={handleUpload}
             >
               Upload
             </button>
+
             <button
-              style={{ background: "green" }}
+              style={{
+                backgroundColor: "#3498db",
+                color: "#fff",
+                border: "none",
+                padding: "10px 20px",
+                borderRadius: "5px",
+                fontSize: "16px",
+                cursor: "pointer",
+                height: "40px",
+                minWidth: "160px",
+              }}
               onClick={handleChangePassword}
             >
-              Change password
+              Change Password
             </button>
-            <button style={{ background: "red" }} onClick={handleDeleteAccount}>
+
+            <button
+              style={{
+                backgroundColor: "#e67e22",
+                color: "#fff",
+                border: "none",
+                padding: "10px 20px",
+                borderRadius: "5px",
+                fontSize: "16px",
+                cursor: "pointer",
+                height: "40px",
+                minWidth: "140px",
+              }}
+              onClick={handleDeleteAccount}
+            >
               Delete Account
             </button>
           </div>
         </div>
+
+        {showModal && (
+          <div
+            className="modal"
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 1000,
+            }}
+          >
+            <div
+              className="modal-content"
+              style={{
+                backgroundColor: "#fff",
+                padding: "30px",
+                borderRadius: "10px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                width: "90%",
+                maxWidth: "400px",
+                textAlign: "center",
+              }}
+            >
+              <h3
+                style={{
+                  marginBottom: "20px",
+                  fontSize: "22px",
+                  color: "#333",
+                }}
+              >
+                Confirm Account Deletion
+              </h3>
+              <input
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  marginBottom: "20px",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  fontSize: "16px",
+                }}
+              />
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: "10px",
+                }}
+              >
+                <button
+                  onClick={deleteAccount}
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#e74c3c",
+                    color: "#fff",
+                    padding: "10px",
+                    border: "none",
+                    borderRadius: "5px",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={handleCancelModal}
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#2ecc71",
+                    color: "#fff",
+                    padding: "10px",
+                    border: "none",
+                    borderRadius: "5px",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="songs-list">
           {mySongs.map((song) => (
             <div
@@ -230,22 +370,6 @@ const Profile = ({ handleLogout }) => {
           ))}
         </div>
       </div>
-
-      {showModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>Confirm Account Deletion</h3>
-            <input
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <button onClick={deleteAccount}>Delete Account</button>
-            <button onClick={handleCancelModal}>Cancel</button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

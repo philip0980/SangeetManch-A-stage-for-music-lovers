@@ -242,6 +242,24 @@ const searchSinglePlaylist = async (req, res) => {
   }
 };
 
+const findPlaylist = async (req, res) => {
+  try {
+    const playlist = await Playlist.find();
+
+    if (!playlist) {
+      return res.status(404).json({
+        success: false,
+        message: "Playlist not found",
+      });
+    }
+    return res
+      .status(200)
+      .json({ success: true, message: "Playlist found", playlist });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export {
   CreatePlaylist,
   EditPlaylist,
@@ -250,4 +268,5 @@ export {
   removeSongFromPlaylist,
   reorderSongsInPlaylist,
   searchSinglePlaylist,
+  findPlaylist,
 };

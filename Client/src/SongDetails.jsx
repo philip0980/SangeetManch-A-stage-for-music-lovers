@@ -204,6 +204,7 @@ const styles = {
   pageContainer: {
     padding: "20px",
     textAlign: "center",
+    marginBottom: "80px",
   },
   coverImage: {
     width: "300px",

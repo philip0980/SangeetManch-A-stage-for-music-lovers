@@ -1,7 +1,10 @@
 import jwt from "jsonwebtoken";
 
-const generateToken = (user) => {
-  return jwt.sign({ id: user._id, email: user.email }, process.env.SECRET_KEY);
+const generateToken = async (user) => {
+  return jwt.sign(
+    { id: user._id, email: user.email, role: user.role },
+    process.env.SECRET_KEY
+  );
 };
 
 const sendToken = async (res, user, statuscode, message) => {

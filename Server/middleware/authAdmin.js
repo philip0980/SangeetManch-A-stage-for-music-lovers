@@ -2,7 +2,9 @@ import jwt from "jsonwebtoken";
 import User from "../models/user.js";
 
 const authenticateAdmin = async (req, res, next) => {
-  const token = req.cookies.token || req.headers.authentication.split(" ")[1];
+  const token =
+    req.cookies.token ||
+    (req.headers.authorization && req.headers.authorization.split(" ")[1]);
 
   if (!token) {
     return res.status(401).json({ error: "Authentication required" });

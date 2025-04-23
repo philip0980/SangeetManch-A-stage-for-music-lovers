@@ -7,8 +7,10 @@ import {
   removeSongFromPlaylist,
   reorderSongsInPlaylist,
   searchSinglePlaylist,
+  findPlaylist,
 } from "../controller/playlist.js";
 import { isAuthenticated } from "../middleware/auth.js";
+import { authenticateAdmin } from "../middleware/authAdmin.js";
 
 const router = express.Router();
 
@@ -27,5 +29,7 @@ router.get(
   isAuthenticated,
   searchSinglePlaylist
 );
+
+router.get("/find-playlist", authenticateAdmin, findPlaylist);
 
 export default router;

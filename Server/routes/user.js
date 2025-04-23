@@ -10,6 +10,8 @@ import {
   SuspendAccount,
   CheckSuspension,
   getProfile,
+  getUsers,
+  singleUser,
 } from "../controller/user.js";
 import { isAuthenticated } from "../middleware/auth.js";
 import { authenticateAdmin } from "../middleware/authAdmin.js";
@@ -31,6 +33,9 @@ router.get("/profile", isAuthenticated, getProfile);
 router.patch("/update-profile", isAuthenticated, UpdateProfile);
 router.post("/reset-password", isAuthenticated, ChangePassword);
 router.delete("/delete-account", isAuthenticated, DeleteAccount);
+
+router.get("/all-users", authenticateAdmin, getUsers);
+router.get("/single-user/:id", authenticateAdmin, singleUser);
 
 //Security and Admin Controls
 

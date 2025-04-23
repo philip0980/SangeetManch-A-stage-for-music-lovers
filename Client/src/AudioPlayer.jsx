@@ -72,7 +72,7 @@ const styles = {
   playPauseButton: {
     fontSize: "30px", // Larger play/pause button
     padding: "10px 20px",
-    backgroundColor: "#ff5733",
+    backgroundColor: "#382626",
     color: "#fff",
     borderRadius: "50%",
     border: "none",
@@ -81,7 +81,7 @@ const styles = {
   skipButton: {
     fontSize: "30px", // Larger skip button
     padding: "10px 20px",
-    backgroundColor: "#ff5733",
+    backgroundColor: "black",
     color: "#fff",
     borderRadius: "50%",
     border: "none",

@@ -69,10 +69,75 @@ const UploadSong = () => {
     }
   };
 
+  // INLINE STYLES
+  const containerStyle = {
+    minHeight: "100vh",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "20px",
+    marginTop: "-80px",
+  };
+
+  const formStyle = {
+    // backgroundColor: "#fff",
+    padding: "30px",
+    borderRadius: "10px",
+    background: "linear-gradient(to right,rgb(185, 190, 215),rgb(41, 29, 52))",
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+    width: "100%",
+    maxWidth: "450px",
+  };
+
+  const inputStyle = {
+    width: "100%",
+    padding: "10px",
+    marginBottom: "15px",
+    border: "1px solid #ccc",
+    borderRadius: "5px",
+    fontSize: "16px",
+  };
+
+  const buttonStyle = {
+    width: "100%",
+    padding: "12px",
+    backgroundColor: "#667eea",
+    color: "#fff",
+    border: "none",
+    borderRadius: "5px",
+    fontSize: "16px",
+    fontWeight: "bold",
+    cursor: "pointer",
+    marginTop: "10px",
+  };
+
+  const headingStyle = {
+    fontSize: "28px",
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: "20px",
+    color: "#333",
+  };
+
+  const labelStyle = {
+    fontSize: "14px",
+    marginBottom: "5px",
+    color: "#555",
+    display: "block",
+  };
+
+  const messageStyle = {
+    marginTop: "20px",
+    textAlign: "center",
+    color: "green",
+    fontWeight: "bold",
+  };
+
   return (
-    <div>
-      <h1>Upload Song</h1>
-      <form onSubmit={handleSubmit}>
+    <div style={containerStyle}>
+      <form onSubmit={handleSubmit} style={formStyle}>
+        <h1 style={headingStyle}>Upload a Song</h1>
+
         <input
           type="text"
           name="title"
@@ -80,7 +145,9 @@ const UploadSong = () => {
           onChange={handleChange}
           placeholder="Song Title"
           required
+          style={inputStyle}
         />
+
         <input
           type="text"
           name="artist"
@@ -88,7 +155,9 @@ const UploadSong = () => {
           onChange={handleChange}
           placeholder="Artist"
           required
+          style={inputStyle}
         />
+
         <input
           type="text"
           name="album"
@@ -96,7 +165,9 @@ const UploadSong = () => {
           onChange={handleChange}
           placeholder="Album"
           required
+          style={inputStyle}
         />
+
         <input
           type="text"
           name="genre"
@@ -104,34 +175,48 @@ const UploadSong = () => {
           onChange={handleChange}
           placeholder="Genre"
           required
+          style={inputStyle}
         />
+
         <input
           type="number"
           name="duration"
           value={formData.duration}
           onChange={handleChange}
-          placeholder="Duration (in seconds)"
+          placeholder="Duration (seconds)"
           required
+          style={inputStyle}
         />
-        <label htmlFor="audio">Audio</label>
-        <input
-          type="file"
-          name="file"
-          onChange={handleFileChange}
-          accept="audio/*"
-          required
-        />
-        <label htmlFor="coverImage">Cover Image</label>
-        <input
-          type="file"
-          name="coverImageUrl"
-          onChange={handleCoverImageChange}
-          accept="image/*"
-        />
-        <button type="submit">Upload Song</button>
-      </form>
 
-      {message && <p>{message}</p>}
+        <div>
+          <label style={labelStyle}>Audio File:</label>
+          <input
+            type="file"
+            name="file"
+            onChange={handleFileChange}
+            accept="audio/*"
+            required
+            style={inputStyle}
+          />
+        </div>
+
+        <div>
+          <label style={labelStyle}>Cover Image:</label>
+          <input
+            type="file"
+            name="coverImageUrl"
+            onChange={handleCoverImageChange}
+            accept="image/*"
+            style={inputStyle}
+          />
+        </div>
+
+        <button type="submit" style={buttonStyle}>
+          Upload Song
+        </button>
+
+        {message && <p style={messageStyle}>{message}</p>}
+      </form>
     </div>
   );
 };

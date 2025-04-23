@@ -18,6 +18,8 @@ import UploadSong from "./UploadSong";
 import CreatePlaylist from "./CreatePlaylist";
 import PlaylistContain from "./PlaylistContain";
 import ChangePassword from "./ChangePassword";
+import Dashboard from "./Dashboard";
+import UserDetail from "./UserDetail";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -56,9 +58,34 @@ const App = () => {
     }
   };
 
-  // Protected Route Wrapper
+  // Protected Route Wrapper for normal users
   const ProtectedRoute = ({ element }) => {
     return isLoggedIn ? element : <Navigate to="/login" />;
+  };
+
+  // Protected Route Wrapper for Admin only
+  const ProtectedAdminRoute = ({ element }) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      return <Navigate to="/login" />;
+    }
+
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      const role = payload.role;
+
+      console.log(payload);
+
+      if (role === "admin") {
+        return element;
+      } else {
+        return <Navigate to="/" />;
+      }
+    } catch (error) {
+      console.error("Error decoding token", error);
+      return <Navigate to="/" />;
+    }
   };
 
   return (
@@ -107,6 +134,14 @@ const App = () => {
                 element={<PlaylistContain />}
               />
               <Route path="/create-playlist" element={<CreatePlaylist />} />
+
+              {/* Protect dashboard route */}
+              <Route
+                path="/dashboard"
+                element={<ProtectedAdminRoute element={<Dashboard />} />}
+              />
+
+              <Route path="/user/:id" element={<UserDetail />} />
             </Routes>
           </div>
         </div>

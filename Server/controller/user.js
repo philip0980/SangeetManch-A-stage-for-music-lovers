@@ -79,7 +79,7 @@ const Login = async (req, res) => {
     const now = new Date();
     if (user.suspensionEnd && user.suspensionEnd > now) {
       return res.status(403).json({
-        error: `Your account is suspended until ${user.suspensionEnd}. Please wait until the suspension ends.`,
+        message: `Your account is suspended until ${user.suspensionEnd} for ${user.suspensionReason}. Please wait until the suspension ends.`,
       });
     }
 
@@ -327,7 +327,7 @@ const CheckSuspension = async (req, res) => {
     const now = new Date();
     if (user.suspensionEnd && user.suspensionEnd > now) {
       return res.status(403).json({
-        error: `User is suspended until ${user.suspensionEnd} for ${user.suspensionReason}`,
+        message: `User is suspended until ${user.suspensionEnd} for ${user.suspensionReason}`,
       });
     }
 
@@ -337,6 +337,41 @@ const CheckSuspension = async (req, res) => {
     res
       .status(500)
       .json({ success: false, error: "Failed to check suspension status" });
+  }
+};
+
+// getting user data
+const getUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+
+    if (!users) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Users not found" });
+    }
+
+    res.status(200).json({ success: true, message: "Users found", users });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, error: "Failed to find the users" });
+  }
+};
+
+const singleUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({ user });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return res.status(500).json({ message: "Error fetching user", error });
   }
 };
 
@@ -351,4 +386,6 @@ export {
   SuspendAccount,
   CheckSuspension,
   getProfile,
+  getUsers,
+  singleUser,
 };
