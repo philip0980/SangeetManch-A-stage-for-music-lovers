@@ -1,3 +1,4 @@
+import 'package:client_flutter/base_url.dart';
 import 'package:client_flutter/change_password.dart';
 import 'package:client_flutter/dashboard_screen.dart';
 import 'package:client_flutter/login.dart';
@@ -73,7 +74,7 @@ class _MainScreenState extends State<MainScreen> {
 
     if (token == null) return;
 
-    final url = Uri.parse("http://10.0.2.2:8000/api/v1/user/logout");
+    final url = Uri.parse(Config.baseUrl + "/api/v1/user/logout");
 
     try {
       final response = await http.post(

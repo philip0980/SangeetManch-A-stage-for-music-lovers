@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:client_flutter/base_url.dart';
 import 'package:client_flutter/music_player_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -21,7 +22,7 @@ class _SongListScreenState extends State<SongListScreen> {
 
   Future<void> _fetchSongs() async {
     try {
-      final url = Uri.parse("http://10.0.2.2:8000/api/v1/song/all-songs");
+      final url = Uri.parse(Config.baseUrl + "/api/v1/song/all-songs");
       final response = await http.get(url);
 
       if (response.statusCode == 200) {

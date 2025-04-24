@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:client_flutter/base_url.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,7 +16,8 @@ class _LoginState extends State<Login> {
   String? _error;
 
   Future<void> loginUser(String email, String password) async {
-    final url = Uri.parse("http://10.0.2.2:8000/api/v1/user/login");
+    // final url = Uri.parse(Config.baseUrl + "/api/v1/user/login");
+    final url = Uri.parse("https://nistha.onrender.com/api/v1/user/login");
 
     final response = await http.post(
       url,
@@ -23,6 +25,7 @@ class _LoginState extends State<Login> {
       body: jsonEncode({'email': email, 'password': password}),
     );
 
+    print("Base URL used: ${Config.baseUrl}");
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final token = data['token'];

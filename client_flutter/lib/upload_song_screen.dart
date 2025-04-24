@@ -2,7 +2,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
-import 'package:path/path.dart';
+import 'package:path/path.dart' as p;
+import 'package:client_flutter/base_url.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UploadSongScreen extends StatefulWidget {
   @override
@@ -12,93 +14,110 @@ class UploadSongScreen extends StatefulWidget {
 class _UploadSongScreenState extends State<UploadSongScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  TextEditingController _titleController = TextEditingController();
-  TextEditingController _artistController = TextEditingController();
-  TextEditingController _albumController = TextEditingController();
-  TextEditingController _genreController = TextEditingController();
-  TextEditingController _durationController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _artistController = TextEditingController();
+  final TextEditingController _albumController = TextEditingController();
+  final TextEditingController _genreController = TextEditingController();
+  final TextEditingController _durationController = TextEditingController();
 
   File? _audioFile;
   File? _coverImage;
 
-  // Function to pick audio file
+  bool _isUploading = false;
+
+  Future<File?> _pickFile({
+    required FileType type,
+    List<String>? extensions,
+  }) async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: type,
+      allowedExtensions: extensions,
+    );
+    if (result != null && result.files.single.path != null) {
+      return File(result.files.single.path!);
+    }
+    return null;
+  }
+
   Future<void> _pickAudioFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
+    File? file = await _pickFile(
       type: FileType.custom,
-      allowedExtensions: ['mp3', 'wav', 'aac'],
+      extensions: ['mp3', 'wav', 'aac'],
     );
-
-    if (result != null && result.files.single.path != null) {
+    if (file != null) {
       setState(() {
-        _audioFile = File(result.files.single.path!);
+        _audioFile = file;
       });
     }
   }
 
-  // Function to pick cover image
   Future<void> _pickCoverImage() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-    );
-
-    if (result != null && result.files.single.path != null) {
+    File? file = await _pickFile(type: FileType.image);
+    if (file != null) {
       setState(() {
-        _coverImage = File(result.files.single.path!);
+        _coverImage = file;
       });
     }
   }
 
-  // Function to upload the song details
   Future<void> _uploadSong() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
     if (_formKey.currentState!.validate() &&
         _audioFile != null &&
         _coverImage != null) {
-      var uri = Uri.parse("http://10.0.2.2:8000/api/v1/song/upload");
+      setState(() {
+        _isUploading = true;
+      });
 
-      var request = http.MultipartRequest('POST', uri);
+      try {
+        var uri = Uri.parse('${Config.baseUrl}/api/v1/song/upload');
+        var request = http.MultipartRequest('POST', uri);
+        request.headers['Authorization'] = 'Bearer $token';
 
-      // Add text fields
-      request.fields['title'] = _titleController.text;
-      request.fields['artist'] = _artistController.text;
-      request.fields['album'] = _albumController.text;
-      request.fields['genre'] = _genreController.text;
-      request.fields['duration'] = _durationController.text;
+        request.fields['title'] = _titleController.text;
+        request.fields['artist'] = _artistController.text;
+        request.fields['album'] = _albumController.text;
+        request.fields['genre'] = _genreController.text;
+        request.fields['duration'] = _durationController.text;
 
-      // Add audio file
-      var audioStream = http.MultipartFile(
-        'audio',
-        _audioFile!.openRead(),
-        await _audioFile!.length(),
-        filename: basename(_audioFile!.path),
-      );
-      request.files.add(audioStream);
+        request.files.add(
+          await http.MultipartFile.fromPath('fileUrl', _audioFile!.path),
+        );
+        request.files.add(
+          await http.MultipartFile.fromPath('coverImageUrl', _coverImage!.path),
+        );
 
-      // Add cover image
-      var coverImageStream = http.MultipartFile(
-        'coverImage',
-        _coverImage!.openRead(),
-        await _coverImage!.length(),
-        filename: basename(_coverImage!.path),
-      );
-      request.files.add(coverImageStream);
+        var response = await request.send();
+        final responseBody = await response.stream.bytesToString();
 
-      // Send request
-      var response = await request.send();
+        if (!mounted) return;
 
-      if (response.statusCode == 200) {
+        setState(() {
+          _isUploading = false;
+        });
+
+        if (response.statusCode == 200) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Song uploaded successfully')));
+          Navigator.pop(context);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Upload failed: $responseBody')),
+          );
+        }
+      } catch (e) {
+        setState(() {
+          _isUploading = false;
+        });
         ScaffoldMessenger.of(
-          context as BuildContext,
-        ).showSnackBar(SnackBar(content: Text('Song uploaded successfully')));
-        Navigator.pop(
-          context as BuildContext,
-        ); // Go back to the previous screen
-      } else {
-        ScaffoldMessenger.of(
-          context as BuildContext,
-        ).showSnackBar(SnackBar(content: Text('Failed to upload song')));
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
       }
     } else {
-      ScaffoldMessenger.of(context as BuildContext).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please fill in all fields and select files')),
       );
     }
@@ -110,55 +129,65 @@ class _UploadSongScreenState extends State<UploadSongScreen> {
       appBar: AppBar(title: Text('Upload Song')),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _titleController,
-                decoration: InputDecoration(labelText: 'Song Title'),
-                validator: (value) => value!.isEmpty ? 'Enter title' : null,
+        child: Column(
+          children: [
+            if (_isUploading) LinearProgressIndicator(),
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: _titleController,
+                    decoration: InputDecoration(labelText: 'Song Title'),
+                    validator: (value) => value!.isEmpty ? 'Enter title' : null,
+                  ),
+                  TextFormField(
+                    controller: _artistController,
+                    decoration: InputDecoration(labelText: 'Artist'),
+                    validator:
+                        (value) => value!.isEmpty ? 'Enter artist' : null,
+                  ),
+                  TextFormField(
+                    controller: _albumController,
+                    decoration: InputDecoration(labelText: 'Album'),
+                  ),
+                  TextFormField(
+                    controller: _genreController,
+                    decoration: InputDecoration(labelText: 'Genre'),
+                  ),
+                  TextFormField(
+                    controller: _durationController,
+                    decoration: InputDecoration(
+                      labelText: 'Duration (e.g., 3:45)',
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    onPressed: _isUploading ? null : _pickAudioFile,
+                    icon: Icon(Icons.audiotrack),
+                    label: Text(
+                      _audioFile != null ? 'Audio Selected' : 'Pick Audio File',
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  ElevatedButton.icon(
+                    onPressed: _isUploading ? null : _pickCoverImage,
+                    icon: Icon(Icons.image),
+                    label: Text(
+                      _coverImage != null
+                          ? 'Image Selected'
+                          : 'Pick Cover Image',
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  ElevatedButton(
+                    onPressed: _isUploading ? null : _uploadSong,
+                    child: Text('Upload Song'),
+                  ),
+                ],
               ),
-              TextFormField(
-                controller: _artistController,
-                decoration: InputDecoration(labelText: 'Artist'),
-                validator: (value) => value!.isEmpty ? 'Enter artist' : null,
-              ),
-              TextFormField(
-                controller: _albumController,
-                decoration: InputDecoration(labelText: 'Album'),
-              ),
-              TextFormField(
-                controller: _genreController,
-                decoration: InputDecoration(labelText: 'Genre'),
-              ),
-              TextFormField(
-                controller: _durationController,
-                decoration: InputDecoration(labelText: 'Duration (e.g., 3:45)'),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton.icon(
-                onPressed: _pickAudioFile,
-                icon: Icon(Icons.audiotrack),
-                label: Text(
-                  _audioFile != null ? 'Audio Selected' : 'Pick Audio File',
-                ),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton.icon(
-                onPressed: _pickCoverImage,
-                icon: Icon(Icons.image),
-                label: Text(
-                  _coverImage != null ? 'Image Selected' : 'Pick Cover Image',
-                ),
-              ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: _uploadSong,
-                child: Text('Upload Song'),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

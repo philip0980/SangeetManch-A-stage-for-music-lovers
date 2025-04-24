@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:client_flutter/base_url.dart';
 import 'package:client_flutter/music_player_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -19,8 +20,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
     if (token == null) throw Exception("No token found");
 
-    final profileUrl = Uri.parse("http://10.0.2.2:8000/api/v1/user/profile");
-    final songsUrl = Uri.parse("http://10.0.2.2:8000/api/v1/song/my-song");
+    final profileUrl = Uri.parse(Config.baseUrl + "/api/v1/user/profile");
+    final songsUrl = Uri.parse(Config.baseUrl + "/api/v1/song/my-song");
 
     final profileRes = await http.get(
       profileUrl,
@@ -57,7 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _deleteAccount(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
-    final url = Uri.parse("http://10.0.2.2:8000/api/v1/user/delete-account");
+    final url = Uri.parse(Config.baseUrl + "/api/v1/user/delete-account");
 
     final confirm = await showDialog<bool>(
       context: context,

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:client_flutter/base_url.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -39,17 +40,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     try {
       final usersResponse = await http.get(
-        Uri.parse('http://10.0.2.2:8000/api/v1/user/all-users'),
+        Uri.parse(Config.baseUrl + '/api/v1/user/all-users'),
         headers: {'Authorization': 'Bearer $token'},
       );
 
       final songsResponse = await http.get(
-        Uri.parse('http://10.0.2.2:8000/api/v1/song/all-songs'),
+        Uri.parse(Config.baseUrl + '/api/v1/song/all-songs'),
         headers: {'Authorization': 'Bearer $token'},
       );
 
       final playlistsResponse = await http.get(
-        Uri.parse('http://10.0.2.2:8000/api/v1/playlist/find-playlist'),
+        Uri.parse(Config.baseUrl + '/api/v1/playlist/find-playlist'),
         headers: {'Authorization': 'Bearer $token'},
       );
 

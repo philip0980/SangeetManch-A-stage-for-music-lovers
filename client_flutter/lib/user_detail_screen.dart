@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:client_flutter/base_url.dart';
 import 'package:client_flutter/music_player_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -36,14 +37,14 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     try {
       final userResponse = await http.get(
         Uri.parse(
-          'http://10.0.2.2:8000/api/v1/user/single-user/${widget.user["_id"]}',
+          Config.baseUrl + '/api/v1/user/single-user/${widget.user["_id"]}',
         ),
         headers: {'Authorization': 'Bearer $token'},
       );
 
       final songResponse = await http.get(
         Uri.parse(
-          'http://10.0.2.2:8000/api/v1/song/their-song/${widget.user["_id"]}',
+          Config.baseUrl + '/api/v1/song/their-song/${widget.user["_id"]}',
         ),
         headers: {'Authorization': 'Bearer $token'},
       );
@@ -94,7 +95,8 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                     try {
                       final response = await http.post(
                         Uri.parse(
-                          'http://10.0.2.2:8000/api/v1/user/suspend/${widget.user["_id"]}',
+                          Config.baseUrl +
+                              '/api/v1/user/suspend/${widget.user["_id"]}',
                         ),
                         headers: {
                           'Authorization': 'Bearer $token',
@@ -154,7 +156,8 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                     try {
                       final response = await http.post(
                         Uri.parse(
-                          'http://10.0.2.2:8000/api/v1/user/ban/${widget.user["_id"]}',
+                          Config.baseUrl +
+                              '/api/v1/user/ban/${widget.user["_id"]}',
                         ),
                         headers: {
                           'Authorization': 'Bearer $token',

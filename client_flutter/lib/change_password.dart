@@ -1,3 +1,4 @@
+import 'package:client_flutter/base_url.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -21,7 +22,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     final token = prefs.getString('token');
 
     if (token == null) throw Exception("No token found");
-    final url = Uri.parse('http://10.0.2.2:8000/api/v1/user/reset-password');
+    final url = Uri.parse(Config.baseUrl + "/api/v1/user/reset-password");
 
     if (newPasswordController.text != confirmPasswordController.text) {
       ScaffoldMessenger.of(
@@ -35,7 +36,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     });
 
     try {
-      final response = await http.put(
+      final response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/json',
@@ -45,9 +46,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         body: jsonEncode({
           'oldPassword': oldPasswordController.text,
           'newPassword': newPasswordController.text,
-          'confirmNewPassword': confirmPasswordController.text,
+          'cNewPassword': confirmPasswordController.text,
         }),
       );
+
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
 
       final responseData = jsonDecode(response.body);
 

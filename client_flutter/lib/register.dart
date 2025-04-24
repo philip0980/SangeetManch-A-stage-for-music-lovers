@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:client_flutter/base_url.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 
 class Register extends StatefulWidget {
@@ -36,27 +38,40 @@ class _RegisterState extends State<Register> {
     String name,
     String email,
     String password,
+    String confirmPassword,
     File? imageFile,
   ) async {
-    final url = Uri.parse("http://10.0.2.2:8000/api/v1/user/register");
+    final url = Uri.parse(Config.baseUrl + "/api/v1/user/register");
 
     var request = http.MultipartRequest('POST', url);
     request.fields['name'] = name;
     request.fields['email'] = email;
     request.fields['password'] = password;
+    request.fields['cpassword'] = confirmPassword; // 🛠️ Add this
+
+    print('Sending name: ${request.fields['name']}');
+    print('Sending email: ${request.fields['email']}');
+    print('Sending password: ${request.fields['password']}');
+    print('Sending cpassword: ${request.fields['cpassword']}');
 
     if (imageFile != null) {
       request.files.add(
-        await http.MultipartFile.fromPath('profile', imageFile.path),
+        await http.MultipartFile.fromPath(
+          'avatar',
+          imageFile.path,
+          contentType: MediaType('image', 'jpeg'),
+        ),
       );
     }
 
+    print("Sending avatar: ${imageFile?.path}");
     final response = await request.send();
 
     if (response.statusCode == 201) {
       Navigator.of(context).pushReplacementNamed('/main');
     } else {
       final respStr = await response.stream.bytesToString();
+      print('Registration failed: $respStr');
       throw Exception('Registration failed: $respStr');
     }
   }
@@ -80,7 +95,7 @@ class _RegisterState extends State<Register> {
     });
 
     try {
-      await registerUser(name, email, password, _profileImage);
+      await registerUser(name, email, password, confirmPassword, _profileImage);
     } catch (e) {
       setState(() {
         _error = e.toString();
