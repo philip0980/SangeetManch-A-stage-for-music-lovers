@@ -64,7 +64,7 @@ const HomePage = ({ searchQuery }) => {
               rel="noopener noreferrer"
               style={{ color: "#00f", textDecoration: "underline" }}
             >
-              Nistha
+              Download 
             </a>
           </p>
         </div>
