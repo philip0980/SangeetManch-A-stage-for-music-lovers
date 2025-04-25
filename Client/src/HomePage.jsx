@@ -59,7 +59,7 @@ const HomePage = ({ searchQuery }) => {
             Not made for mobile view, download our app for a better experience.{" "}
             <br />
             <a
-              href="https://github.com/philip0980/SangeetManch-A-stage-for-music-lovers/releases/download/v1.0.0/app-release.apk" // your app link here
+              href="https://github.com/philip0980/SangeetManch-A-stage-for-music-lovers/releases/download/v1.0.0/nistha.apk" // your app link here
               target="_blank"
               rel="noopener noreferrer"
               style={{ color: "#00f", textDecoration: "underline" }}
