@@ -54,10 +54,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
         headers: {'Authorization': 'Bearer $token'},
       );
 
+      if (usersResponse.statusCode != 200) {
+        print("Users API failed: ${usersResponse.body}");
+      }
+      if (songsResponse.statusCode != 200) {
+        print("Songs API failed: ${songsResponse.body}");
+      }
+      if (playlistsResponse.statusCode != 200) {
+        print("Playlists API failed: ${playlistsResponse.body}");
+      }
+      final decodedUsers = jsonDecode(usersResponse.body);
+      final decodedSongs = jsonDecode(songsResponse.body);
+      final decodedPlaylists = jsonDecode(playlistsResponse.body);
+
       setState(() {
-        users = jsonDecode(usersResponse.body)['users'] ?? [];
-        songs = jsonDecode(songsResponse.body)['songs'] ?? [];
-        playlists = jsonDecode(playlistsResponse.body)['playlist'] ?? [];
+        users = decodedUsers['users'] ?? [];
+        songs = decodedSongs['songs'] ?? [];
+        playlists = decodedPlaylists['playlist'] ?? [];
         isLoading = false;
       });
     } catch (e) {
@@ -69,6 +82,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildUserCard(Map<String, dynamic> user) {
+    final avatarUrl = user['avatar']?['url'];
+    final avatarImage =
+        (avatarUrl != null && avatarUrl.isNotEmpty)
+            ? NetworkImage(avatarUrl)
+            : AssetImage('assets/images/default-user.jpg') as ImageProvider;
+
     return Card(
       margin: const EdgeInsets.all(8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -82,13 +101,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           );
         },
-        leading: CircleAvatar(
-          backgroundImage:
-              user["avatar"]["url"] != null
-                  ? NetworkImage(user["avatar"]["url"])
-                  : AssetImage('assets/default-user.png') as ImageProvider,
-          radius: 25,
-        ),
+        leading: CircleAvatar(backgroundImage: avatarImage, radius: 25),
         title: Text(
           user['email'] ?? 'No Email',
           style: TextStyle(fontWeight: FontWeight.bold),

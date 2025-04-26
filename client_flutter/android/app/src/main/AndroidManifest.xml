@@ -5,7 +5,7 @@
 
 
     <application
-        android:label="client_flutter"
+        android:label="@string/app_name"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
           android:usesCleartextTraffic="true">

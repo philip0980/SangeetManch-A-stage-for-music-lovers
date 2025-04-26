@@ -13,6 +13,8 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   Map<String, dynamic>? user;
   List<dynamic> mySongs = [];
+  bool isLoading = true;
+  String? error;
 
   Future<Map<String, dynamic>> _fetchProfileAndSongs() async {
     final prefs = await SharedPreferences.getInstance();
@@ -23,6 +25,9 @@ class _ProfilePageState extends State<ProfilePage> {
     final profileUrl = Uri.parse(Config.baseUrl + "/api/v1/user/profile");
     final songsUrl = Uri.parse(Config.baseUrl + "/api/v1/song/my-song");
 
+    Map<String, dynamic> result = {};
+
+    // Fetch profile
     final profileRes = await http.get(
       profileUrl,
       headers: {
@@ -31,6 +36,14 @@ class _ProfilePageState extends State<ProfilePage> {
       },
     );
 
+    if (profileRes.statusCode == 200) {
+      final profileData = json.decode(profileRes.body);
+      result['user'] = profileData['user'];
+    } else {
+      throw Exception("Failed to fetch profile");
+    }
+
+    // Fetch songs (but don’t throw if it fails)
     final songsRes = await http.get(
       songsUrl,
       headers: {
@@ -39,14 +52,14 @@ class _ProfilePageState extends State<ProfilePage> {
       },
     );
 
-    if (profileRes.statusCode == 200 && songsRes.statusCode == 200) {
-      final profileData = json.decode(profileRes.body);
+    if (songsRes.statusCode == 200) {
       final songsData = json.decode(songsRes.body);
-
-      return {'user': profileData['user'], 'songs': songsData['songs']};
+      result['songs'] = songsData['songs'];
     } else {
-      throw Exception("Failed to fetch data");
+      result['songs'] = []; // fallback to empty list if song fetch fails
     }
+
+    return result;
   }
 
   @override
@@ -154,7 +167,7 @@ class _ProfilePageState extends State<ProfilePage> {
           return Center(child: Text("Error: ${snapshot.error}"));
         } else if (snapshot.hasData) {
           final user = snapshot.data!["user"];
-          final songs = snapshot.data!["songs"];
+          final songs = snapshot.data!["songs"] ?? [];
 
           return SingleChildScrollView(
             child: Column(
