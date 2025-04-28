@@ -68,7 +68,7 @@ class _RegisterState extends State<Register> {
     final response = await request.send();
 
     if (response.statusCode == 201) {
-      Navigator.of(context).pushReplacementNamed('/main');
+      Navigator.of(context).pushReplacementNamed('/login');
     } else {
       final respStr = await response.stream.bytesToString();
       print('Registration failed: $respStr');
@@ -89,6 +89,12 @@ class _RegisterState extends State<Register> {
       return;
     }
 
+    if (_profileImage == null) {
+      setState(() {
+        _error = "Please select a profile picture";
+      });
+      return;
+    }
     setState(() {
       _isLoading = true;
       _error = null;
